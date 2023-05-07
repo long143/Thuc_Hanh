@@ -10,12 +10,14 @@
             box-sizing: border-box;
             font-family: Arial sans-serif;
         }
+
         .container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
+
         .main {
             width: 800px;
             height: 500px;
@@ -24,31 +26,38 @@
             justify-content: center;
             align-items: center;
         }
+
+        .heading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         table {
             width: 600px;
             height: 100px;
             text-align: center;
         }
-        input{
+
+        input {
             width: 350px;
         }
+
         #create {
+            width: 200px;
             border-radius: 10px;
             background-color: #7ef67e;
             color: red;
         }
-        #search {
-            border-radius: 10px;
-            background-color: #6defc9;
-            color: #de2e6b;
-        }
-        .edit{
-            border-radius: 5px;
+
+        .edit {
+            border-radius: 10%;
             background-color: blue;
             color: white;
         }
-        .delete{
-            border-radius: 5px;
+
+        .delete {
+            border-radius: 10%;
             background-color: red;
             color: white;
         }
@@ -57,14 +66,11 @@
 <body>
 <div class="container">
     <div class="main">
-        <div>
-            <p id="result1" style="color: red ; text-align: center"></p>
+        <div class="heading">
             <input type="text" id="username" placeholder="The Name Students">
-            <button id="create" type="submit" onclick="create()">Create</button>
-        </div>
-        <div>
-            <input type="text" id="check" placeholder="Search Student">
-            <button id="search">Search</button>
+            <p id="result1" style="color: red ; text-align: center"></p>
+            <button id="create" type="submit" onclick="createStudent()">Create</button>
+            <input type="text" id="searchStudent" placeholder="Search Student" oninput="actionSearch()">
         </div>
         <table border="1" id="table">
             <thead>
@@ -77,34 +83,108 @@
                 <th>EDIT</th>
                 <th>DELETE</th>
             </tr>
-            <tr>
-                <td>1</td>
-                <td>Ngân</td>
-                <td><button class="edit" onclick="edit()">Edit</button></td>
-                <td><button class="delete">DELETE</button></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Long</td>
-                <td><button class="edit" onclick="edit()">Edit</button></td>
-                <td><button class="delete">DELETE</button></td>
-            </tr>
             </thead>
             <tbody id="result"></tbody>
         </table>
     </div>
 </div>
 <script type="text/javascript">
-    function create(){
-        let nameStudent = document.getElementById("username").value;
-        if ( nameStudent == ""){
-            alert("The name is required! Please try again!" )
-        }
-        else
-        {
-            document.getElementById("result1").innerHTML = "Create Student Success"
-        }
+    let arrStudent = ['ngân', 'long']
 
+    function showListStudent() {
+        let dataTable = '';
+        for (let i = 0; i < arrStudent.length; i++) {
+            // dataTable += '<tr>' +
+            //     '<td>'+(i+1)+'</td>' +
+            //     '<td>'+arrStudent[i]+'</td>' +
+            //     "<td><button class='edit' onclick='updateStudent()'>Edit</button> </td>" +
+            //     "<td><button class='delete' onclick='delete()'>DELETE</button> </td>" +
+            //     "</tr>";
+            // document.getElementById('result').innerHTML = dataTable
+            dataTable += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${arrStudent[i]}</td>
+                            <td><button class='edit' onclick='updateStudent(${i})'>Edit</button> </td>
+                            <td><button class='delete' onclick='deleteSearch(${i})'>DELETE</button> </td>`
+            // document.getElementById('result').innerHTML = dataTable
+        }
+        document.getElementById('result').innerHTML = dataTable
+
+    }
+
+    showListStudent();
+
+    function createStudent() {
+        let nameStudent = document.getElementById("username").value;
+        if (nameStudent.trim() === "") {
+            alert("The name is required! Please try again!")
+        } else {
+            arrStudent.push(nameStudent);
+            console.log("ar", arrStudent)
+            document.getElementById("result1").innerHTML = "Create Student Success"
+            showListStudent()
+        }
+    }
+
+    function updateStudent(index) {
+        let upStudent = prompt("Enter name to update: ");
+        if (upStudent == null) {
+            alert("The name is null! Please try again!")
+        } else if (upStudent === "") {
+            alert("The name is required! Please try again!")
+        } else if (upStudent.toLowerCase() === arrStudent[index].toLowerCase()) {
+            alert("The name is existed! Please try again!")
+        } else {
+            arrStudent[index] = upStudent;
+            document.getElementById('result1').innerHTML = "Update success!"
+            showListStudent();
+        }
+    }
+
+    function deleteSearch(index) {
+        if (confirm("Are you sure delete? Yes --> Ok or No --> Cancel")) {
+            arrStudent.splice(index, 1);
+            showListStudent();
+            alert("Delete success")
+        } else {
+            alert("Just don't delete it!")
+        }
+    }
+    let listSearch = []
+    function actionSearch() {
+        let searchStudent = document.getElementById('searchStudent').value;
+        if (searchStudent.trim() ===''){
+            showListStudent()
+        } else {
+            listSearch = [];
+            for (let i = 0; i <arrStudent.length;i++){
+                // if (searchStudent.toLowerCase() === arrStudent[i].toLowerCase()){
+                //     listSearch.push(arrStudent[i])
+                // }
+                if (arrStudent[i].search(searchStudent) !== -1){
+                    listSearch.push(arrStudent[i])
+                }
+            }
+            showListSearch()
+        }
+    }
+    function showListSearch(){
+        let dataTable = '';
+        for (let i = 0; i < listSearch.length; i++) {
+            // dataTable += '<tr>' +
+            //     '<td>'+(i+1)+'</td>' +
+            //     '<td>'+arrStudent[i]+'</td>' +
+            //     "<td><button class='edit' onclick='updateStudent()'>Edit</button> </td>" +
+            //     "<td><button class='delete' onclick='delete()'>DELETE</button> </td>" +
+            //     "</tr>";
+            // document.getElementById('result').innerHTML = dataTable
+            dataTable += `<tr>
+                            <td>${i + 1}</td>
+                            <td>${listSearch[i]}</td>
+                            <td><button class='edit' onclick='updateStudent(${i})'>Edit</button> </td>
+                            <td><button class='delete' onclick='deleteSearch(${i})'>DELETE</button> </td>`
+        }
+        document.getElementById('result').innerHTML = dataTable
     }
 
 </script>
